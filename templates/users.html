@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}用户管理 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">用户管理</h5>
+        <span>共 {{ total }} 个用户</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>注册时间</th>
+                        <th>状态</th>
+                        <th>管理员</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id[:8] }}...</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge bg-success">正常</span>
+                            {% else %}
+                                <span class="badge bg-danger">禁用</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_admin %}
+                                <span class="badge bg-primary">是</span>
+                            {% else %}
+                                <span class="badge bg-secondary">否</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.id != current_user.id %}
+                            <button class="btn btn-sm btn-outline-warning toggle-user" data-user-id="{{ user.id }}">
+                                {% if user.is_active %}禁用{% else %}启用{% endif %}
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total > config.USERS_PER_PAGE %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('user.user_list', page=page-1) }}">上一页</a>
+                </li>
+                {% endif %}
+
+                {% for p in range(1, (total // config.USERS_PER_PAGE + 2)) %}
+                    {% if p == page %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ p }}</span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('user.user_list', page=p) }}">{{ p }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page < (total // config.USERS_PER_PAGE + 1) %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('user.user_list', page=page+1) }}">下一页</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-user');
+
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const button = this;
+
+            fetch(`/user/${userId}/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 更新按钮文本和状态显示
+                    const row = button.closest('tr');
+                    const statusBadge = row.querySelector('td:nth-child(5) .badge');
+
+                    if (data.is_active) {
+                        statusBadge.className = 'badge bg-success';
+                        statusBadge.textContent = '正常';
+                        button.textContent = '禁用';
+                    } else {
+                        statusBadge.className = 'badge bg-danger';
+                        statusBadge.textContent = '禁用';
+                        button.textContent = '启用';
+                    }
+
+                    alert('操作成功');
+                } else {
+                    alert(data.message || '操作失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('操作失败');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
