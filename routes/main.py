@@ -22,3 +22,9 @@ def page_not_found(e):
 
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+# 在 routes/main.py 或新文件中添加
+@main_bp.route('/admin-entry')
+def admin_entry():
+    """管理员专用入口页面"""
+    return render_template('admin_entry.html')

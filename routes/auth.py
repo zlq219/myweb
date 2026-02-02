@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from utils.mailer import send_verification_email
-from datetime import datetime  # 添加这一行！
+from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -51,7 +51,7 @@ def register():
             'username': username,
             'email': email,
             'password': password,
-            'is_active': False,  # 初始状态为未激活
+            'is_active': False,
             'is_admin': False,
             'email_verified': False,
             'created_at': datetime.utcnow()
@@ -65,29 +65,24 @@ def register():
         else:
             flash('注册成功，但验证邮件发送失败。请联系管理员。', 'warning')
 
-        # 不自动登录，需要先验证邮箱
         return redirect(url_for('auth.login'))
 
     return render_template('register.html')
 
 
-# 新增邮箱验证路由
 @auth_bp.route('/verify-email/<token>')
 def verify_email(token):
     User = get_user_model()
 
     try:
-        # 解码令牌
         serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         email = serializer.loads(token, salt='email-verification', max_age=3600)
 
-        # 查找用户
         user = User.get_by_email(get_mongo(), email)
         if not user:
             flash('验证链接无效或已过期。', 'danger')
             return redirect(url_for('main.index'))
 
-        # 更新用户验证状态
         update_data = {
             'email_verified': True,
             'is_active': True,
@@ -107,7 +102,6 @@ def verify_email(token):
         return redirect(url_for('main.index'))
 
 
-# 新增重新发送验证邮件路由
 @auth_bp.route('/resend-verification', methods=['GET', 'POST'])
 def resend_verification():
     if request.method == 'POST':
@@ -128,7 +122,6 @@ def resend_verification():
             flash('该邮箱已验证，请直接登录。', 'info')
             return redirect(url_for('auth.login'))
 
-        # 重新发送验证邮件
         if send_verification_email(user):
             flash('验证邮件已重新发送，请检查您的邮箱。', 'success')
         else:
@@ -139,20 +132,15 @@ def resend_verification():
     return render_template('resend_verification.html')
 
 
-# 修改登录逻辑，检查邮箱是否验证
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """普通登录页面 - 所有用户（包括管理员）都能用"""
     if current_user.is_authenticated:
-        # 如果已登录，根据用户权限跳转到不同页面
-        if current_user.is_admin:
-            return redirect(url_for('admin.dashboard'))
-        else:
-            return redirect(url_for('main.dashboard'))
+        return redirect(url_for('main.dashboard'))
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
-        remember = 'remember' in request.form
 
         if not email or not password:
             flash('请输入邮箱和密码', 'danger')
@@ -171,31 +159,60 @@ def login():
                 flash('账户已被禁用，请联系管理员', 'danger')
                 return render_template('login.html')
 
-            #login_user(user, remember=remember)
-            # 找到这行（大约第121行）：
-            login_user(user, remember=remember)
-
-            # 确保它被修改为（如果没有，请现在修改）：
-            login_user(user, remember=False)  # 强制不记住，即使表单有勾选
-
-            next_page = request.args.get('next')
+            login_user(user, remember=False)
             flash('登录成功！', 'success')
 
-            # ============ 新增的权限判断逻辑 ============
-            if next_page:
-                # 如果存在next参数（如访问受保护页面触发的跳转），优先跳转到next
-                return redirect(next_page)
-            elif user.is_admin:
-                # 如果是管理员，跳转到管理后台
-                return redirect(url_for('admin.dashboard'))
-            else:
-                # 普通用户跳转到用户面板
-                return redirect(url_for('main.dashboard'))
-            # ==========================================
+            # 🔥 所有用户都去普通用户页面
+            # 即使是管理员，从这里登录也只是普通用户
+            return redirect(url_for('main.dashboard'))
         else:
             flash('邮箱或密码错误', 'danger')
 
     return render_template('login.html')
+
+
+@auth_bp.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """管理员专属登录 - 只做用户管理"""
+    if current_user.is_authenticated:
+        if current_user.is_admin:
+            return redirect(url_for('admin.dashboard'))
+        return redirect(url_for('main.dashboard'))
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        password = request.form.get('password', '')
+
+        if not email or not password:
+            flash('请输入邮箱和密码', 'danger')
+            return render_template('auth/admin_login.html')
+
+        User = get_user_model()
+        user = User.get_by_email(get_mongo(), email)
+
+        if user and user.check_password(password):
+            if not user.email_verified:
+                flash('请先验证您的邮箱。', 'warning')
+                return render_template('verify_prompt.html', email=email)
+
+            # 🔥 必须是管理员才能登录
+            if not user.is_admin:
+                flash('此页面仅限管理员访问', 'danger')
+                return render_template('auth/admin_login.html')
+
+            if not user.is_active:
+                flash('账户已被禁用', 'danger')
+                return render_template('auth/admin_login.html')
+
+            login_user(user, remember=True)
+            flash('管理员登录成功！', 'success')
+
+            # 直接进入管理后台，只做用户管理
+            return redirect(url_for('admin.dashboard'))
+        else:
+            flash('邮箱或密码错误', 'danger')
+
+    return render_template('auth/admin_login.html')
 
 
 @auth_bp.route('/logout')
@@ -206,15 +223,14 @@ def logout():
     logout_user()
     flash('您已成功退出登录。', 'success')
 
-    # 创建重定向响应
     response = redirect(url_for('auth.login'))
-
-    # 主动清除所有可能的会话Cookie
     response.delete_cookie('flask_session')
     response.delete_cookie('session')
     response.delete_cookie('remember_token')
-
-    # 确保不会设置新的会话
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
 
     return response
+
+
+
+

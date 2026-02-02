@@ -1,0 +1,39 @@
+<!-- templates/admin_entry.html -->
+{% extends "base.html" %}
+
+{% block title %}管理员入口{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h1 class="display-4 mb-4">🔐</h1>
+                    <h2 class="mb-4">管理员入口</h2>
+                    <p class="text-muted mb-4">此页面仅限管理员访问</p>
+
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('auth.admin_login') }}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-crown me-2"></i>管理员登录
+                        </a>
+
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>返回首页
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            普通用户请使用 <a href="{{ url_for('auth.login') }}">普通登录页面</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

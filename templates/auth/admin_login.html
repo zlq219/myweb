@@ -1,0 +1,73 @@
+<!-- templates/auth/admin_login.html -->
+{% extends "base.html" %}
+
+{% block title %}管理员登录 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-crown me-2"></i>管理员登录
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        此页面仅限管理员使用。普通用户请使用
+                        <a href="{{ url_for('auth.login') }}">普通登录页面</a>。
+                    </div>
+
+                    <form method="POST" action="{{ url_for('auth.admin_login') }}">
+                        {{ form.hidden_tag() if form }}
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>管理员邮箱
+                            </label>
+                            <input type="email" class="form-control" id="email"
+                                   name="email" required placeholder="admin@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>密码
+                            </label>
+                            <input type="password" class="form-control" id="password"
+                                   name="password" required placeholder="请输入密码">
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">记住我</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>管理员登录
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="text-muted mb-2">其他操作</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-user me-1"></i>普通用户登录
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-user-plus me-1"></i>注册新用户
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>© 2024 MyWeb 管理员系统</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
