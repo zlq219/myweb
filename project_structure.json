@@ -1,0 +1,602 @@
+{
+  "path": "E:\\zlq\\myweb",
+  "name": "myweb",
+  "type": "directory",
+  "level": 0,
+  "children": [
+    {
+      "name": "PROJECT_STRUCTURE.md",
+      "size": 4594,
+      "modified": "2026-01-29 19:42:24",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".md"
+    },
+    {
+      "name": "README.md",
+      "size": 448,
+      "modified": "2026-01-26 16:00:54",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".md"
+    },
+    {
+      "name": "__init__.py",
+      "size": 1268,
+      "modified": "2026-01-26 17:12:21",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "app.py",
+      "size": 2241,
+      "modified": "2026-01-29 17:56:10",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "config.py",
+      "size": 2266,
+      "modified": "2026-01-29 18:10:31",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "debug_admin.py",
+      "size": 1600,
+      "modified": "2026-01-29 14:55:05",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "path": "E:\\zlq\\myweb\\dev_logs",
+      "name": "dev_logs",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "开发日志.md",
+          "size": 4787,
+          "modified": "2026-01-29 19:30:51",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".md"
+        }
+      ],
+      "file_count": 1,
+      "dir_count": 0,
+      "total_size": 4787
+    },
+    {
+      "name": "extensions.py",
+      "size": 437,
+      "modified": "2026-01-26 17:23:55",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "path": "E:\\zlq\\myweb\\flask_session",
+      "name": "flask_session",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "2029240f6d1128be89ddc32729463129",
+          "size": 9,
+          "modified": "2026-01-29 17:54:10",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ""
+        }
+      ],
+      "file_count": 1,
+      "dir_count": 0,
+      "total_size": 9
+    },
+    {
+      "name": "generate_docs.py",
+      "size": 11933,
+      "modified": "2026-01-29 19:42:23",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "make_admin.py",
+      "size": 3634,
+      "modified": "2026-01-29 14:38:27",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "manage.py",
+      "size": 10990,
+      "modified": "2026-01-29 14:33:36",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "path": "E:\\zlq\\myweb\\models",
+      "name": "models",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "__init__.py",
+          "size": 0,
+          "modified": "2026-01-26 17:38:46",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "user.py",
+          "size": 3698,
+          "modified": "2026-01-29 14:50:41",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        }
+      ],
+      "file_count": 2,
+      "dir_count": 0,
+      "total_size": 3698
+    },
+    {
+      "name": "project_structure.json",
+      "size": 14632,
+      "modified": "2026-01-29 19:38:02",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".json"
+    },
+    {
+      "name": "requirements.txt",
+      "size": 322,
+      "modified": "2026-01-29 15:26:08",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".txt"
+    },
+    {
+      "path": "E:\\zlq\\myweb\\routes",
+      "name": "routes",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "__init__.py",
+          "size": 41,
+          "modified": "2026-01-26 17:41:07",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "admin.py",
+          "size": 8233,
+          "modified": "2026-01-29 18:46:47",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "auth.py",
+          "size": 7840,
+          "modified": "2026-01-29 18:07:33",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "main.py",
+          "size": 571,
+          "modified": "2026-01-26 17:47:25",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "user.py",
+          "size": 4683,
+          "modified": "2026-01-26 17:43:29",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        }
+      ],
+      "file_count": 5,
+      "dir_count": 0,
+      "total_size": 21368
+    },
+    {
+      "name": "run.bat",
+      "size": 1252,
+      "modified": "2026-01-26 17:51:19",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".bat"
+    },
+    {
+      "name": "run.py",
+      "size": 2712,
+      "modified": "2026-01-26 17:09:58",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "scan_project.py",
+      "size": 10023,
+      "modified": "2026-01-29 19:19:09",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "showuser.py",
+      "size": 2161,
+      "modified": "2026-01-29 18:15:40",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "start",
+      "size": 9,
+      "modified": "2026-01-26 16:25:14",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ""
+    },
+    {
+      "path": "E:\\zlq\\myweb\\static",
+      "name": "static",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "path": "E:\\zlq\\myweb\\static\\css",
+          "name": "css",
+          "type": "directory",
+          "level": 2,
+          "children": [
+            {
+              "name": "style.css",
+              "size": 1129,
+              "modified": "2026-01-26 16:16:53",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".css"
+            }
+          ],
+          "file_count": 1,
+          "dir_count": 0,
+          "total_size": 1129
+        },
+        {
+          "path": "E:\\zlq\\myweb\\static\\js",
+          "name": "js",
+          "type": "directory",
+          "level": 2,
+          "children": [
+            {
+              "name": "main.js",
+              "size": 3483,
+              "modified": "2026-01-26 16:17:34",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".js"
+            }
+          ],
+          "file_count": 1,
+          "dir_count": 0,
+          "total_size": 3483
+        },
+        {
+          "path": "E:\\zlq\\myweb\\static\\uploads",
+          "name": "uploads",
+          "type": "directory",
+          "level": 2,
+          "children": [
+            {
+              "name": "69773be5c69c1318a8839a8c_.png",
+              "size": 2850024,
+              "modified": "2026-01-26 18:08:00",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".png"
+            }
+          ],
+          "file_count": 1,
+          "dir_count": 0,
+          "total_size": 2850024
+        }
+      ],
+      "file_count": 0,
+      "dir_count": 3,
+      "total_size": 2854636
+    },
+    {
+      "path": "E:\\zlq\\myweb\\templates",
+      "name": "templates",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "404.html",
+          "size": 421,
+          "modified": "2026-01-26 16:15:57",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "path": "E:\\zlq\\myweb\\templates\\admin",
+          "name": "admin",
+          "type": "directory",
+          "level": 2,
+          "children": [
+            {
+              "name": "dashboard.html",
+              "size": 13878,
+              "modified": "2026-01-29 18:41:18",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".html"
+            }
+          ],
+          "file_count": 1,
+          "dir_count": 0,
+          "total_size": 13878
+        },
+        {
+          "name": "base.html",
+          "size": 952,
+          "modified": "2026-01-26 17:48:03",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "dashboard.html",
+          "size": 3883,
+          "modified": "2026-01-26 16:12:26",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "index.html",
+          "size": 999,
+          "modified": "2026-01-26 17:48:18",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "login.html",
+          "size": 1632,
+          "modified": "2026-01-26 17:49:52",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "path": "E:\\zlq\\myweb\\templates\\partials",
+          "name": "partials",
+          "type": "directory",
+          "level": 2,
+          "children": [
+            {
+              "name": "footer.html",
+              "size": 1267,
+              "modified": "2026-01-26 16:14:47",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".html"
+            },
+            {
+              "name": "header.html",
+              "size": 2407,
+              "modified": "2026-01-26 16:14:17",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".html"
+            },
+            {
+              "name": "messages.html",
+              "size": 494,
+              "modified": "2026-01-26 17:51:02",
+              "is_dir": false,
+              "type": "file",
+              "level": 3,
+              "extension": ".html"
+            }
+          ],
+          "file_count": 3,
+          "dir_count": 0,
+          "total_size": 4168
+        },
+        {
+          "name": "profile.html",
+          "size": 3853,
+          "modified": "2026-01-26 16:12:49",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "register.html",
+          "size": 2118,
+          "modified": "2026-01-26 17:50:13",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "resend_verification.html",
+          "size": 1263,
+          "modified": "2026-01-29 13:59:30",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "users.html",
+          "size": 5369,
+          "modified": "2026-01-26 16:13:38",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        },
+        {
+          "name": "verify_prompt.html",
+          "size": 1869,
+          "modified": "2026-01-29 14:00:16",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".html"
+        }
+      ],
+      "file_count": 10,
+      "dir_count": 2,
+      "total_size": 40405
+    },
+    {
+      "name": "test_db.py",
+      "size": 1129,
+      "modified": "2026-01-26 16:28:13",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "name": "user.py",
+      "size": 3079,
+      "modified": "2026-01-26 17:06:39",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".py"
+    },
+    {
+      "path": "E:\\zlq\\myweb\\utils",
+      "name": "utils",
+      "type": "directory",
+      "level": 1,
+      "children": [
+        {
+          "name": "__init__.py",
+          "size": 0,
+          "modified": "2026-01-26 16:08:49",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "helpers.py",
+          "size": 349,
+          "modified": "2026-01-26 17:40:50",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "mailer.py",
+          "size": 4242,
+          "modified": "2026-01-29 13:58:19",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        },
+        {
+          "name": "validators.py",
+          "size": 515,
+          "modified": "2026-01-26 17:40:35",
+          "is_dir": false,
+          "type": "file",
+          "level": 2,
+          "extension": ".py"
+        }
+      ],
+      "file_count": 4,
+      "dir_count": 0,
+      "total_size": 5106
+    },
+    {
+      "name": "总体设计.md",
+      "size": 5343,
+      "modified": "2026-01-26 18:21:33",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".md"
+    },
+    {
+      "name": "操作手册.md",
+      "size": 943,
+      "modified": "2026-01-29 19:51:24",
+      "is_dir": false,
+      "type": "file",
+      "level": 1,
+      "extension": ".md"
+    }
+  ],
+  "file_count": 21,
+  "dir_count": 7,
+  "total_size": 3011025
+}

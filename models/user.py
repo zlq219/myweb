@@ -21,11 +21,12 @@ class User(UserMixin):
         # 使用下划线前缀避免与Flask-Login的property冲突
         self._is_active = user_data.get('is_active', True)
         self._is_admin = user_data.get('is_admin', False)
+        self.email_verified = user_data.get('email_verified', False)
 
     # Flask-Login需要的属性（只读）
     @property
     def is_active(self):
-        return self._is_active
+        return self._is_active and self.email_verified
 
     @property
     def is_admin(self):
@@ -47,9 +48,11 @@ class User(UserMixin):
             'updated_at': self.updated_at,
             'is_active': self._is_active,
             'is_admin': self._is_admin,
+            'email_verified': self.email_verified,
             'password_hash': self.password_hash
         }
 
+    # 【关键修复】确保以下静态方法都存在：
     @staticmethod
     def get_by_id(mongo, user_id):
         try:
@@ -90,12 +93,6 @@ class User(UserMixin):
 
     @staticmethod
     def update(mongo, user_id, update_data):
-        # 处理特殊的字段名
-        if 'is_active' in update_data:
-            update_data['_is_active'] = update_data.pop('is_active')
-        if 'is_admin' in update_data:
-            update_data['_is_admin'] = update_data.pop('is_admin')
-
         update_data['updated_at'] = datetime.utcnow()
         mongo.db.users.update_one(
             {'_id': ObjectId(user_id)},
@@ -111,11 +108,3 @@ class User(UserMixin):
     @staticmethod
     def get_count(mongo):
         return mongo.db.users.count_documents({})
-
-    # 为了方便，添加一个方法来更新用户状态
-    @staticmethod
-    def update_user_status(mongo, user_id, is_active):
-        mongo.db.users.update_one(
-            {'_id': ObjectId(user_id)},
-            {'$set': {'is_active': is_active, 'updated_at': datetime.utcnow()}}
-        )

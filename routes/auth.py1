@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from utils.mailer import send_verification_email
-from datetime import datetime  # 添加这一行！
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -53,7 +52,7 @@ def register():
             'password': password,
             'is_active': False,  # 初始状态为未激活
             'is_admin': False,
-            'email_verified': False,
+            'email_verified': False
             'created_at': datetime.utcnow()
         }
 

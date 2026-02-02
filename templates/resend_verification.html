@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}重新发送验证邮件 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">重新发送验证邮件</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('auth.resend_verification') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">邮箱地址</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="form-text">请输入您注册时使用的邮箱地址。</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">发送验证邮件</button>
+                    </div>
+                </form>
+                <div class="mt-3 text-center">
+                    <p>想起来密码了？ <a href="{{ url_for('auth.login') }}">返回登录</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
