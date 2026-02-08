@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}公告列表管理 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-list me-2"></i>公告列表管理</h2>
+            <p class="text-muted">管理系统所有公告</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-primary me-2">
+                <i class="fas fa-plus me-2"></i>新公告
+            </a>
+            <a href="{{ url_for('announcements.admin_dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>返回
+            </a>
+        </div>
+    </div>
+
+    <!-- 状态筛选 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a href="?status=all" class="btn btn-outline-secondary">全部</a>
+                <a href="?status=published" class="btn btn-outline-success">已发布</a>
+                <a href="?status=draft" class="btn btn-outline-warning">草稿</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 公告表格 -->
+    <div class="card">
+        <div class="card-body">
+            {% if announcements %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>分类</th>
+                            <th>状态</th>
+                            <th>发布时间</th>
+                            <th>查看数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ann in announcements %}
+                        <tr>
+                            <td>
+                                <strong>{{ ann.title }}</strong>
+                                {% if ann.is_pinned %}
+                                <span class="badge bg-danger ms-2">置顶</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ ann.category }}</span>
+                            </td>
+                            <td>
+                                {% if ann.status == 'published' %}
+                                <span class="badge bg-success">已发布</span>
+                                {% elif ann.status == 'draft' %}
+                                <span class="badge bg-warning">草稿</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ann.publish_time_str %}
+                                {{ ann.publish_time_str }}
+                                {% else %}
+                                <span class="text-muted">未发布</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ann.view_count }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('announcements.announcement_detail', announcement_id=ann._id) }}"
+                                       class="btn btn-outline-info" title="查看">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('announcements.edit_announcement', announcement_id=ann._id) }}"
+                                       class="btn btn-outline-primary" title="编辑">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">暂无公告</h5>
+                <p class="text-muted">还没有任何公告，点击"新公告"开始创建</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

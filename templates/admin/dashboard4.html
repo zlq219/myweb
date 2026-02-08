@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}管理员后台 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="fas fa-cog me-2"></i>管理员后台</h2>
+            <p class="text-muted">系统管理和配置</p>
+        </div>
+    </div>
+
+    <!-- 系统统计 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-6">{{ total_users }}</h1>
+                    <p class="card-text">总用户数</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-6">{{ active_users }}</h1>
+                    <p class="card-text">活跃用户</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-6">{{ unverified_users }}</h1>
+                    <p class="card-text">未验证用户</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-6">{{ admin_users }}</h1>
+                    <p class="card-text">管理员</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能卡片 -->
+    <div class="row">
+        <!-- 用户管理 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>用户管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">管理所有系统用户，包括查看、启用、禁用等操作。</p>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-list me-2"></i>用户列表
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-search me-2"></i>搜索用户
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公告管理 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bullhorn me-2"></i>公告管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">发布和管理系统公告，包括通知、更新、维护等信息。</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('announcements.admin_dashboard') }}" class="btn btn-success">
+                            <i class="fas fa-cog me-2"></i>公告管理
+                        </a>
+                        <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-outline-success">
+                            <i class="fas fa-plus me-2"></i>发布公告
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统设置 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sliders-h me-2"></i>系统设置
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">配置系统参数，包括清理设置、邮件配置、权限管理等。</p>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-info">
+                            <i class="fas fa-wrench me-2"></i>系统配置
+                        </a>
+                        <a href="/dev/cleanup-now" class="btn btn-outline-info">
+                            <i class="fas fa-broom me-2"></i>清理工具
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速链接 -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">快速链接</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('announcements.admin_announcement_list') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>所有公告
+                        </a>
+                        <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-outline-success">
+                            <i class="fas fa-plus me-2"></i>新公告
+                        </a>
+                        <a href="{{ url_for('announcements.announcement_list') }}" class="btn btn-outline-info">
+                            <i class="fas fa-eye me-2"></i>用户视角
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

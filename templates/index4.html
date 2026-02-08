@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4">欢迎来到 MyWeb</h1>
+    <p class="lead">这是一个基于 Flask 和 MongoDB 的 Web 基础项目。</p>
+    <hr class="my-4">
+    <p>包含用户注册、登录、个人中心和管理功能。</p>
+    <div class="mt-4">
+        {% if current_user.is_authenticated %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('main.dashboard') }}" role="button">进入控制台</a>
+            <a class="btn btn-outline-primary btn-lg" href="{{ url_for('user.profile') }}" role="button">个人资料</a>
+        {% else %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}" role="button">立即注册</a>
+            <a class="btn btn-outline-primary btn-lg" href="{{ url_for('auth.login') }}" role="button">登录</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

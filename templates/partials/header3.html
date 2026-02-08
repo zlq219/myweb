@@ -1,0 +1,17 @@
+
+<!-- 未登录时的登录下拉菜单 -->
+{% if not current_user.is_authenticated %}
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('auth.login') }}">
+        <i class="fas fa-sign-in-alt"></i> 登录
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('auth.register') }}">
+        <i class="fas fa-user-plus"></i> 注册
+    </a>
+</li>
+<!-- 不显示管理员登录入口 -->
+{% endif %}
+
+
