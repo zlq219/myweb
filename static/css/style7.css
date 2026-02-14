@@ -1,0 +1,365 @@
+/* 左侧导航 + 右侧内容布局样式 */
+
+:root {
+    --sidebar-width: 250px;
+    --sidebar-collapsed-width: 70px;
+    --header-height: 60px;
+    --footer-height: 50px;
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+}
+
+/* 页面容器 */
+.page-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+/* 左侧导航栏 */
+.sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--secondary-color) 0%, #1a252f 100%);
+    color: white;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.sidebar-logo i {
+    font-size: 2rem;
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+/* 导航菜单 */
+.sidebar-nav {
+    padding: 20px 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+}
+
+.nav-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: var(--primary-color);
+}
+
+.nav-link.active {
+    background-color: rgba(52, 152, 219, 0.2);
+    color: white;
+    border-left-color: var(--primary-color);
+}
+
+.nav-icon {
+    width: 24px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.nav-text {
+    flex: 1;
+}
+
+.nav-arrow {
+    transition: transform 0.3s ease;
+}
+
+/* 子菜单 */
+.submenu {
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    padding: 10px 0;
+}
+
+.nav-item.has-submenu.open .submenu {
+    display: block;
+}
+
+.nav-item.has-submenu.open .nav-arrow {
+    transform: rotate(180deg);
+}
+
+.submenu-item {
+    display: block;
+    padding: 8px 20px 8px 50px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.submenu-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.submenu-item i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* 用户信息区域 */
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar i {
+    font-size: 32px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.user-role {
+    margin-top: 2px;
+}
+
+.user-role .badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+}
+
+/* 主内容区 */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+}
+
+/* 顶部操作栏 */
+.content-header {
+    background-color: white;
+    height: var(--header-height);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background-color: #f0f0f0;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 内容主体 */
+.content-body {
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    padding: 20px;
+}
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+/* 页面底部 */
+.content-footer {
+    height: var(--footer-height);
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.footer-content {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.sidebar-mobile-open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar-collapsed .sidebar {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-collapsed .main-content {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-collapsed .nav-text,
+    .sidebar-collapsed .logo-text,
+    .sidebar-collapsed .user-details {
+        display: none;
+    }
+
+    .sidebar-collapsed .sidebar-logo i {
+        margin-right: 0;
+        font-size: 1.8rem;
+    }
+
+    .sidebar-collapsed .user-avatar {
+        margin-right: 0;
+    }
+}
+
+/* 折叠状态样式 */
+.sidebar-collapsed .sidebar {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-collapsed .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+.sidebar-collapsed .nav-text,
+.sidebar-collapsed .logo-text,
+.sidebar-collapsed .user-details,
+.sidebar-collapsed .nav-arrow {
+    display: none;
+}
+
+.sidebar-collapsed .sidebar-logo i {
+    margin-right: 0;
+    font-size: 1.8rem;
+}
+
+.sidebar-collapsed .user-avatar {
+    margin-right: 0;
+}
+
+.sidebar-collapsed .submenu {
+    display: none !important;
+}
+
+/* 动画效果 */
+.fade-enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* 工具类 */
+.external-link::after {
+    content: "↗";
+    margin-left: 5px;
+    font-size: 0.8em;
+    opacity: 0.7;
+}
