@@ -1,10 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}首页 - MyWeb{% endblock %}
+
+{% block user_content %}  <!-- 改为 user_content -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>欢迎, {{ current_user.username }}!</h1>
+            <p>这是你的个人主页。</p>
+
+            {% if recent_announcements %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>最近公告</h5>
+                </div>
+                <div class="card-body">
+                    {% for announcement in recent_announcements %}
+                    <div class="mb-3">
+                        <h6>{{ announcement.title }}</h6>
+                        <p class="text-muted small">{{ announcement.publish_time_str }}</p>
+                        <p>{{ announcement.summary }}</p>
+                        <a href="#" class="btn btn-sm btn-primary">查看详情</a>  <!-- 先用# -->
+                    </div>
+                    {% if not loop.last %}<hr>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

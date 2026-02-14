@@ -36,7 +36,13 @@ class User(UserMixin):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        # 添加调试信息
+        print(f"DEBUG: Checking password for user: {self.username}")
+        print(f"DEBUG: Stored password_hash: {self.password_hash}")
+        print(f"DEBUG: Input password: {password}")
+        result = check_password_hash(self.password_hash, password)
+        print(f"DEBUG: Password check result: {result}")
+        return result
 
     def to_dict(self):
         return {
@@ -79,17 +85,23 @@ class User(UserMixin):
 
     @staticmethod
     def create(mongo, user_data):
-        user = User(user_data)
-        if 'password' in user_data:
-            user.set_password(user_data['password'])
-
-        user_dict = user.to_dict()
-        user_dict['created_at'] = datetime.utcnow()
-        user_dict['updated_at'] = datetime.utcnow()
+        # 直接使用传入的 user_data
+        user_dict = {
+            'username': user_data.get('username', ''),
+            'email': user_data.get('email', ''),
+            'password_hash': user_data.get('password_hash', ''),
+            'avatar': user_data.get('avatar', ''),
+            'bio': user_data.get('bio', ''),
+            'created_at': user_data.get('created_at', datetime.utcnow()),
+            'updated_at': user_data.get('updated_at', datetime.utcnow()),
+            'is_active': user_data.get('is_active', False),
+            'is_admin': user_data.get('is_admin', False),
+            'email_verified': user_data.get('email_verified', False)
+        }
 
         result = mongo.db.users.insert_one(user_dict)
-        user.id = str(result.inserted_id)
-        return user
+        user_dict['_id'] = result.inserted_id
+        return User(user_dict)
 
     @staticmethod
     def update(mongo, user_id, update_data):

@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- templates/dynamic/add_function.html -->
+{% extends "base.html" %}
+
+{% block title %}添加功能 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus me-2"></i>添加新功能</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('dynamic.add_function') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">功能名称 *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="form-text">英文名称，用于系统标识</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">显示标题 *</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="url_path" class="form-label">URL路径 *</label>
+                            <input type="text" class="form-control" id="url_path" name="url_path" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>保存功能
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,104 +2,320 @@
 
 {% block title %}用户管理 - MyWeb{% endblock %}
 
+{% block extra_css %}
+<style>
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+    }
+    .search-box {
+        max-width: 300px;
+    }
+    .stats-card {
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    .user-row {
+        transition: background-color 0.2s;
+    }
+    .user-row:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">用户管理</h5>
-        <span>共 {{ total }} 个用户</span>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>用户名</th>
-                        <th>邮箱</th>
-                        <th>注册时间</th>
-                        <th>状态</th>
-                        <th>管理员</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{ user.id[:8] }}...</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                        <td>
-                            {% if user.is_active %}
-                                <span class="badge bg-success">正常</span>
-                            {% else %}
-                                <span class="badge bg-danger">禁用</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if user.is_admin %}
-                                <span class="badge bg-primary">是</span>
-                            {% else %}
-                                <span class="badge bg-secondary">否</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if user.id != current_user.id %}
-                            <button class="btn btn-sm btn-outline-warning toggle-user" data-user-id="{{ user.id }}">
-                                {% if user.is_active %}禁用{% else %}启用{% endif %}
-                            </button>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="container-fluid">
+    <!-- 页面标题和操作 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-0">
+                <i class="fas fa-users me-2"></i>用户管理
+            </h1>
+            <p class="text-muted mb-0">管理系统用户账户和权限</p>
         </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/admin/cleanup-now" class="btn btn-warning">
+                <i class="fas fa-broom me-1"></i>清理未验证用户
+            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>返回控制台
+            </a>
+        </div>
+    </div>
 
-        {% if total > config.USERS_PER_PAGE %}
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                {% if page > 1 %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('user.user_list', page=page-1) }}">上一页</a>
-                </li>
-                {% endif %}
+    <!-- 统计卡片 -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-primary">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">总用户数</h6>
+                    <h2 class="text-primary mb-0">{{ stats.total }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-success">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">已验证</h6>
+                    <h2 class="text-success mb-0">{{ stats.verified }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-warning">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">未验证</h6>
+                    <h2 class="text-warning mb-0">{{ stats.unverified }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-info">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">管理员</h6>
+                    <h2 class="text-info mb-0">{{ stats.admins }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-success">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">活跃</h6>
+                    <h2 class="text-success mb-0">{{ stats.active }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stats-card border-danger">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-muted mb-1">禁用</h6>
+                    <h2 class="text-danger mb-0">{{ stats.inactive }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                {% for p in range(1, (total // config.USERS_PER_PAGE + 2)) %}
-                    {% if p == page %}
-                    <li class="page-item active">
-                        <span class="page-link">{{ p }}</span>
-                    </li>
-                    {% else %}
+    <!-- 搜索和筛选 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" name="search"
+                               value="{{ search }}" placeholder="搜索用户名或邮箱...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="filter">
+                        <option value="all" {% if filter_type == 'all' %}selected{% endif %}>所有用户</option>
+                        <option value="verified" {% if filter_type == 'verified' %}selected{% endif %}>已验证邮箱</option>
+                        <option value="unverified" {% if filter_type == 'unverified' %}selected{% endif %}>未验证邮箱</option>
+                        <option value="admins" {% if filter_type == 'admins' %}selected{% endif %}>管理员</option>
+                        <option value="active" {% if filter_type == 'active' %}selected{% endif %}>活跃用户</option>
+                        <option value="inactive" {% if filter_type == 'inactive' %}selected{% endif %}>禁用用户</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i>筛选
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 用户列表 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">用户列表</h5>
+            <div class="text-muted">
+                共 {{ total_users }} 个用户，显示第 {{ (page-1)*per_page+1 }}-{{ min(page*per_page, total_users) }} 个
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50">头像</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>状态</th>
+                            <th>注册时间</th>
+                            <th width="200">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="user-row" id="user-{{ user._id }}">
+                            <td>
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar }}" class="user-avatar" alt="头像">
+                                {% else %}
+                                <div class="user-avatar bg-secondary d-flex align-items-center justify-content-center">
+                                    <span class="text-white">{{ user.username[0].upper() }}</span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{ user.username }}</div>
+                                <small class="text-muted">ID: {{ user._id[:8] }}...</small>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% if user.is_admin %}
+                                    <span class="badge bg-primary status-badge">管理员</span>
+                                    {% endif %}
+                                    {% if user.email_verified %}
+                                    <span class="badge bg-success status-badge">已验证</span>
+                                    {% else %}
+                                    <span class="badge bg-warning status-badge">未验证</span>
+                                    {% endif %}
+                                    {% if user.is_active %}
+                                    <span class="badge bg-success status-badge">活跃</span>
+                                    {% else %}
+                                    <span class="badge bg-danger status-badge">禁用</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div>{{ user.created_at_str }}</div>
+                                <small class="text-muted">更新: {{ user.updated_at_str }}</small>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    {% if not user.is_admin or user._id != current_user.id|string %}
+                                    <button class="btn btn-sm btn-outline-warning toggle-active-btn"
+                                            data-user-id="{{ user._id }}"
+                                            data-current-active="{{ user.is_active }}"
+                                            title="{{ '禁用' if user.is_active else '启用' }}">
+                                        <i class="fas fa-{{ 'ban' if user.is_active else 'check' }}"></i>
+                                    </button>
+                                    {% if not user.is_admin %}
+                                    <button class="btn btn-sm btn-outline-info toggle-admin-btn"
+                                            data-user-id="{{ user._id }}"
+                                            title="设为管理员">
+                                        <i class="fas fa-user-shield"></i>
+                                    </button>
+                                    {% endif %}
+                                    {% if user._id != current_user.id|string %}
+                                    <button class="btn btn-sm btn-outline-danger delete-user-btn"
+                                            data-user-id="{{ user._id }}"
+                                            title="删除用户">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-users fa-2x mb-3"></i>
+                                    <p>没有找到符合条件的用户</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if total_users > per_page %}
+        <div class="card-footer">
+            <nav aria-label="分页导航">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page > 1 %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('user.user_list', page=p) }}">{{ p }}</a>
+                        <a class="page-link" href="?page={{ page-1 }}&per_page={{ per_page }}&search={{ search }}&filter={{ filter_type }}">
+                            上一页
+                        </a>
                     </li>
                     {% endif %}
-                {% endfor %}
 
-                {% if page < (total // config.USERS_PER_PAGE + 1) %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('user.user_list', page=page+1) }}">下一页</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
+                    {% set total_pages = (total_users + per_page - 1) // per_page %}
+                    {% set start_page = max(1, page-2) %}
+                    {% set end_page = min(total_pages, page+2) %}
+
+                    {% for p in range(start_page, end_page+1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}&per_page={{ per_page }}&search={{ search }}&filter={{ filter_type }}">
+                            {{ p }}
+                        </a>
+                    </li>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page+1 }}&per_page={{ per_page }}&search={{ search }}&filter={{ filter_type }}">
+                            下一页
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
         {% endif %}
+    </div>
+</div>
+
+<!-- 用户详情模态框 -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">用户详情</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userDetailsContent">
+                <!-- 动态加载用户详情 -->
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+// 全局变量
+let currentUserId = '{{ current_user.id }}';
+
+// 切换用户活跃状态
 document.addEventListener('DOMContentLoaded', function() {
-    const toggleButtons = document.querySelectorAll('.toggle-user');
-
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
+    document.querySelectorAll('.toggle-active-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
             const userId = this.dataset.userId;
-            const button = this;
+            const currentActive = this.dataset.currentActive === 'true';
 
-            fetch(`/user/${userId}/toggle`, {
+            if (userId === currentUserId) {
+                alert('不能修改自己的状态');
+                return;
+            }
+
+            if (!confirm(`确定要${currentActive ? '禁用' : '启用'}这个用户吗？`)) {
+                return;
+            }
+
+            fetch(`/admin/api/users/${userId}/toggle-active`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,28 +324,82 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // 更新按钮文本和状态显示
-                    const row = button.closest('tr');
-                    const statusBadge = row.querySelector('td:nth-child(5) .badge');
-
-                    if (data.is_active) {
-                        statusBadge.className = 'badge bg-success';
-                        statusBadge.textContent = '正常';
-                        button.textContent = '禁用';
-                    } else {
-                        statusBadge.className = 'badge bg-danger';
-                        statusBadge.textContent = '禁用';
-                        button.textContent = '启用';
-                    }
-
-                    alert('操作成功');
+                    location.reload();
                 } else {
-                    alert(data.message || '操作失败');
+                    alert('操作失败: ' + data.error);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('操作失败');
+                alert('请求失败: ' + error);
+            });
+        });
+    });
+
+    // 切换管理员权限
+    document.querySelectorAll('.toggle-admin-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+
+            if (userId === currentUserId) {
+                alert('不能修改自己的管理员权限');
+                return;
+            }
+
+            if (!confirm('确定要修改这个用户的管理员权限吗？')) {
+                return;
+            }
+
+            fetch(`/admin/api/users/${userId}/toggle-admin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('操作失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('请求失败: ' + error);
+            });
+        });
+    });
+
+    // 删除用户
+    document.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+
+            if (userId === currentUserId) {
+                alert('不能删除自己');
+                return;
+            }
+
+            if (!confirm('确定要删除这个用户吗？此操作不可撤销！')) {
+                return;
+            }
+
+            fetch(`/admin/api/users/${userId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`user-${userId}`).remove();
+                    alert('用户删除成功');
+                } else {
+                    alert('删除失败: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('请求失败: ' + error);
             });
         });
     });

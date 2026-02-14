@@ -1,10 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base_layout.html" %}
+
+{% block page_wrapper %}
+<!-- 页面容器 -->
+<div class="page-container">
+
+    <!-- 左侧导航栏 -->
+    <aside class="sidebar">
+        <!-- Logo和系统名称 -->
+        <div class="sidebar-header">
+            <a href="{{ url_for('dashboard.index') }}" class="sidebar-logo">
+                <i class="fas fa-cube"></i>
+                <span class="logo-text">MyWeb</span>
+            </a>
+        </div>
+
+        <!-- 导航菜单 -->
+        <nav class="sidebar-nav">
+            {% block sidebar_content %}
+                <!-- 根据用户类型加载不同的侧边栏 -->
+                {% if current_user.is_admin %}
+                    {% include "components/admin_sidebar.html" %}
+                {% else %}
+                    {% include "components/user_sidebar.html" %}
+                {% endif %}
+            {% endblock %}
+        </nav>
+
+        <!-- 侧边栏底部 - 用户信息 -->
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if current_user.avatar %}
+                        <img src="{{ url_for('static', filename='uploads/avatars/' + current_user.avatar) }}" alt="头像">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ current_user.username }}</div>
+                    <div class="user-role">
+                        {% if current_user.is_admin %}
+                            <span class="badge bg-danger">管理员</span>
+                        {% else %}
+                            <span class="badge bg-primary">用户</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 顶部操作栏 -->
+        <header class="content-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">{% block page_title %}首页{% endblock %}</h1>
+            </div>
+
+            <div class="header-right">
+                <!-- 通知、消息等快捷操作 -->
+                <div class="header-actions">
+                    {% if current_user.is_admin %}
+                    <a href="{{ url_for('dashboard.admin_index') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-tachometer-alt"></i> 管理面板
+                    </a>
+                    {% endif %}
+
+                    <a href="{{ url_for('profile.index') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-user"></i> 个人中心
+                    </a>
+
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> 退出
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 页面内容 -->
+        <div class="content-body">
+            <!-- 消息提示区域 -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- 实际页面内容 -->
+            {% block content %}
+            <div class="container-fluid">
+                {% block page_content %}{% endblock %}
+            </div>
+            {% endblock %}
+        </div>
+
+        <!-- 页面底部 -->
+        <footer class="content-footer">
+            <div class="footer-content">
+                <span>&copy; 2026 MyWeb. All rights reserved.</span>
+                <span class="ms-3">Version 2.0</span>
+            </div>
+        </footer>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 侧边栏折叠/展开功能
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.querySelector('.page-container').classList.toggle('sidebar-collapsed');
+});
+
+// 当前菜单项高亮
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath && currentPath.startsWith(linkPath)) {
+            link.classList.add('active');
+            // 如果有父级菜单，也展开
+            const parent = link.closest('.nav-item.has-submenu');
+            if (parent) {
+                parent.classList.add('open');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

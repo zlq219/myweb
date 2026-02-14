@@ -29,7 +29,7 @@ l>{% extends "base.html" %}
             <div class="list-group list-group-flush">
                 <a href="{{ url_for('user.profile') }}" class="list-group-item list-group-item-action">个人资料</a>
 
-                <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action {% if not current_user.is_admin %}disabled{% endif %}">    <i class="fas fa-users me-2"></i>用户管理</a>
+
                 <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action text-danger">退出登录</a>
             </div>
         </div>

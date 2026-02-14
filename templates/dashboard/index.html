@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base_sidebar.html" %}
+
+{% block title %}控制台 - MyWeb{% endblock %}
+
+{% block page_title %}控制台{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h1>欢迎回来，{{ current_user.username }}！</h1>
+                <p>这是您的控制台页面。</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,417 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}公告列表管理 - MyWeb{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+    }
+    .pinned-badge {
+        background-color: #dc3545;
+        color: white;
+    }
+    .priority-badge-1 {
+        background-color: #6c757d;
+        color: white;
+    }
+    .priority-badge-2 {
+        background-color: #ffc107;
+        color: #000;
+    }
+    .priority-badge-3 {
+        background-color: #dc3545;
+        color: white;
+    }
+    .action-buttons {
+        min-width: 120px;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 页面标题和操作按钮 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-bullhorn text-primary me-2"></i>
+                公告管理
+            </h1>
+            <p class="text-muted mb-0">管理系统所有公告，支持发布、编辑和删除操作</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('announcements.admin_dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>返回仪表盘
+            </a>
+            <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>发布新公告
+            </a>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-muted mb-1">总公告数</h6>
+                            <h3 class="mb-0">{{ stats.total|default(0) }}</h3>
+                        </div>
+                        <div class="bg-primary text-white rounded-circle p-3">
+                            <i class="fas fa-file-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-muted mb-1">已发布</h6>
+                            <h3 class="mb-0">{{ stats.published|default(0) }}</h3>
+                        </div>
+                        <div class="bg-success text-white rounded-circle p-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-muted mb-1">草稿</h6>
+                            <h3 class="mb-0">{{ stats.draft|default(0) }}</h3>
+                        </div>
+                        <div class="bg-warning text-white rounded-circle p-3">
+                            <i class="fas fa-edit fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-muted mb-1">总查看数</h6>
+                            <h3 class="mb-0">{{ stats.total_views|default(0) }}</h3>
+                        </div>
+                        <div class="bg-info text-white rounded-circle p-3">
+                            <i class="fas fa-eye fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选和搜索栏 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="btn-group" role="group">
+                            <a href="?status=all"
+                               class="btn {% if status == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                全部 ({{ stats.total|default(0) }})
+                            </a>
+                            <a href="?status=published"
+                               class="btn {% if status == 'published' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                已发布 ({{ stats.published|default(0) }})
+                            </a>
+                            <a href="?status=draft"
+                               class="btn {% if status == 'draft' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                                草稿 ({{ stats.draft|default(0) }})
+                            </a>
+                            <a href="?status=archived"
+                               class="btn {% if status == 'archived' %}btn-info{% else %}btn-outline-info{% endif %}">
+                                归档 ({{ stats.archived|default(0) }})
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="搜索公告标题..."
+                               id="searchInput" value="{{ keyword|default('') }}">
+                        <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 公告表格 -->
+    <div class="card">
+        <div class="card-body">
+            {% if announcements %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="30%">标题</th>
+                            <th width="10%">分类</th>
+                            <th width="15%">状态</th>
+                            <th width="15%">发布时间</th>
+                            <th width="10%">查看数</th>
+                            <th width="20%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ann in announcements %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <strong>{{ ann.title }}</strong>
+                                        <div class="mt-1">
+                                            {% if ann.is_pinned %}
+                                            <span class="badge pinned-badge me-1">置顶</span>
+                                            {% endif %}
+                                            {% if ann.priority == 3 %}
+                                            <span class="badge priority-badge-3 me-1">紧急</span>
+                                            {% elif ann.priority == 2 %}
+                                            <span class="badge priority-badge-2 me-1">重要</span>
+                                            {% else %}
+                                            <span class="badge priority-badge-1 me-1">普通</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ ann.category }}</span>
+                            </td>
+                            <td>
+                                {% if ann.status == 'published' %}
+                                <span class="badge bg-success">已发布</span>
+                                {% elif ann.status == 'draft' %}
+                                <span class="badge bg-warning">草稿</span>
+                                {% else %}
+                                <span class="badge bg-info">归档</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ann.publish_time_str %}
+                                <div class="text-muted small">
+                                    <i class="far fa-calendar me-1"></i>
+                                    {{ ann.publish_time_str }}
+                                </div>
+                                {% else %}
+                                <span class="text-muted">未发布</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">{{ ann.view_count }}</span>
+                                </div>
+                            </td>
+                            <td class="action-buttons">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ url_for('announcements.announcement_detail', announcement_id=ann._id) }}"
+                                       class="btn btn-outline-info" title="查看" data-bs-toggle="tooltip">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('announcements.edit_announcement', announcement_id=ann._id) }}"
+                                       class="btn btn-outline-primary" title="编辑" data-bs-toggle="tooltip">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <!-- 新增：删除按钮 -->
+                                    <button class="btn btn-outline-danger delete-announcement"
+                                            data-id="{{ ann._id }}"
+                                            data-title="{{ ann.title }}"
+                                            title="删除" data-bs-toggle="tooltip">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            {% if total_pages > 1 %}
+            <nav aria-label="公告分页" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page-1 }}&status={{ status }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        {% if p == page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ p }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ p }}&status={{ status }}">{{ p }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page+1 }}&status={{ status }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-inbox fa-4x text-muted"></i>
+                </div>
+                <h4 class="text-muted mb-3">暂无公告</h4>
+                <p class="text-muted mb-4">还没有任何公告，点击"发布新公告"开始创建</p>
+                <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i>发布第一条公告
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化工具提示
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // 搜索功能
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    searchBtn.addEventListener('click', function() {
+        const keyword = searchInput.value.trim();
+        if (keyword) {
+            window.location.href = `?keyword=${encodeURIComponent(keykey)}&status={{ status }}`;
+        }
+    });
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchBtn.click();
+        }
+    });
+
+    // 删除公告确认
+    const deleteButtons = document.querySelectorAll('.delete-announcement');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const announcementId = this.dataset.id;
+            const announcementTitle = this.dataset.title;
+
+            // 使用更友好的确认对话框
+            const modalHtml = `
+                <div class="modal fade" id="deleteModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>确认删除
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <strong>警告：</strong>此操作无法撤销！
+                                </div>
+                                <p>确定要删除公告 <strong>"${announcementTitle}"</strong> 吗？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-danger" id="confirmDelete">确认删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 添加模态框到页面
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+
+            // 确认删除
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                fetch(`/admin/announcements/${announcementId}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 显示成功消息
+                        const successAlert = `
+                            <div class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3"
+                                 style="z-index: 9999; width: 90%; max-width: 500px;" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                ${data.message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                        document.body.insertAdjacentHTML('beforeend', successAlert);
+
+                        // 关闭模态框
+                        modal.hide();
+
+                        // 延迟刷新页面
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        alert('删除失败: ' + data.message);
+                        modal.hide();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('删除失败，请检查网络连接');
+                    modal.hide();
+                });
+            });
+
+            // 模态框关闭时清理
+            document.getElementById('deleteModal').addEventListener('hidden.bs.modal', function () {
+                this.remove();
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,10 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}发布公告 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus me-2"></i>发布新公告</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('announcements.create_announcement') }}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">公告标题 *</label>
+                            <input type="text" class="form-control" id="title" name="title" required
+                                   placeholder="请输入公告标题">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">分类</label>
+                                <select class="form-select" id="category" name="category">
+                                    <option value="通知" selected>通知</option>
+                                    <option value="更新">更新</option>
+                                    <option value="维护">维护</option>
+                                    <option value="活动">活动</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="priority" class="form-label">优先级</label>
+                                <select class="form-select" id="priority" name="priority">
+                                    <option value="1">普通</option>
+                                    <option value="2">重要</option>
+                                    <option value="3">紧急</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="content" class="form-label">公告内容 *</label>
+                            <textarea class="form-control" id="content" name="content"
+                                      rows="10" required placeholder="请输入公告内容"></textarea>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_pinned" name="is_pinned">
+                            <label class="form-check-label" for="is_pinned">置顶显示</label>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('announcements.admin_announcement_list') }}"
+                               class="btn btn-secondary me-md-2">
+                                取消
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>发布公告
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

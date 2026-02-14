@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="nav-items">
+    <!-- 管理面板 -->
+    <div class="nav-item">
+        <a href="{{ url_for('dashboard.admin_index') }}" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <span class="nav-text">管理面板</span>
+        </a>
+    </div>
+
+    <!-- 用户管理 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-users"></i>
+            <span class="nav-text">用户管理</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('admin.user_list') }}" class="submenu-item">
+                <i class="fas fa-list"></i> 用户列表
+            </a>
+        </div>
+    </div>
+
+    <!-- 公告管理 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-bullhorn"></i>
+            <span class="nav-text">公告管理</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('announcements.admin_announcement_list') }}" class="submenu-item">
+                <i class="fas fa-list"></i> 公告列表
+            </a>
+            <a href="{{ url_for('announcements.create_announcement') }}" class="submenu-item">
+                <i class="fas fa-plus"></i> 创建公告
+            </a>
+        </div>
+    </div>
+</div>

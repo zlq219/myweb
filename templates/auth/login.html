@@ -1,6 +1,141 @@
-<!-- 在 login.html 的卡片内容顶部添加 -->
-<div class="alert alert-info">
-    <i class="fas fa-info-circle me-2"></i>
-    普通用户登录页面。管理员请使用
-    <a href="{{ url_for('auth.admin_login') }}" class="alert-link">管理员登录</a>。
-</div>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - MyWeb</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0 text-center">
+                            <i class="fas fa-sign-in-alt me-2"></i>用户登录
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- 显示闪现消息 -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- 检查是否有表单变量 -->
+                        {% if form %}
+                        <!-- 登录表单 -->
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-user me-1"></i>用户名
+                                </label>
+                                {{ form.username(class="form-control", id="username", placeholder="请输入用户名") }}
+                                {% if form.username.errors %}
+                                    {% for error in form.username.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>密码
+                                </label>
+                                {{ form.password(class="form-control", id="password", placeholder="请输入密码") }}
+                                {% if form.password.errors %}
+                                    {% for error in form.password.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                {{ form.remember_me(class="form-check-input", id="remember_me") }}
+                                <label class="form-check-label" for="remember_me">
+                                    记住我
+                                </label>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt me-2"></i>登录
+                                </button>
+                            </div>
+
+                            <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                        </form>
+                        {% else %}
+                        <!-- 如果没有表单，显示基本登录表单 -->
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-user me-1"></i>用户名
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>密码
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                                <label class="form-check-label" for="remember_me">
+                                    记住我
+                                </label>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt me-2"></i>登录
+                                </button>
+                            </div>
+
+                            <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                        </form>
+                        {% endif %}
+
+                        <hr>
+
+                        <!-- 注册链接 -->
+                        <div class="text-center">
+                            <p class="mb-2">还没有账号？</p>
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-success">
+                                <i class="fas fa-user-plus me-2"></i>立即注册
+                            </a>
+                        </div>
+
+                        <hr>
+
+                        <!-- 管理员登录链接 -->
+                        <div class="text-center mt-3">
+                            <p class="mb-2">管理员登录？</p>
+                            <a href="{{ url_for('auth.admin_login') }}" class="btn btn-outline-info">
+                                <i class="fas fa-user-shield me-2"></i>管理员登录入口
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

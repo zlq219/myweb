@@ -1,10 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- 管理员侧边栏组件 -->
+<div class="nav-items">
+    <!-- 管理面板 -->
+    <div class="nav-item">
+        <a href="{{ url_for('dashboard.admin_index') }}" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <span class="nav-text">管理面板</span>
+        </a>
+    </div>
+
+    <!-- 用户管理 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-users"></i>
+            <span class="nav-text">用户管理</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('admin.user_list') }}" class="submenu-item">
+                <i class="fas fa-list"></i> 用户列表
+            </a>
+            <a href="{{ url_for('admin.user_add') }}" class="submenu-item">
+                <i class="fas fa-user-plus"></i> 添加用户
+            </a>
+            <a href="{{ url_for('admin.user_search') }}" class="submenu-item">
+                <i class="fas fa-search"></i> 搜索用户
+            </a>
+        </div>
+    </div>
+
+    <!-- 公告管理 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-bullhorn"></i>
+            <span class="nav-text">公告管理</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('announcements.admin_announcement_list') }}" class="submenu-item">
+                <i class="fas fa-list"></i> 公告列表
+            </a>
+            <a href="{{ url_for('announcements.admin_dashboard') }}" class="submenu-item">
+                <i class="fas fa-chart-bar"></i> 数据统计
+            </a>
+            <a href="{{ url_for('announcements.create_announcement') }}" class="submenu-item">
+                <i class="fas fa-plus"></i> 创建公告
+            </a>
+        </div>
+    </div>
+
+    <!-- 系统设置 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-sliders-h"></i>
+            <span class="nav-text">系统设置</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('admin.system_settings') }}" class="submenu-item">
+                <i class="fas fa-cogs"></i> 基本设置
+            </a>
+            <a href="{{ url_for('admin.menu_settings') }}" class="submenu-item">
+                <i class="fas fa-bars"></i> 菜单设置
+            </a>
+            <a href="{{ url_for('admin.theme_settings') }}" class="submenu-item">
+                <i class="fas fa-palette"></i> 主题设置
+            </a>
+        </div>
+    </div>
+
+    <!-- 系统工具 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-tools"></i>
+            <span class="nav-text">系统工具</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('admin.cleanup_users') }}" class="submenu-item">
+                <i class="fas fa-trash-alt"></i> 清理用户
+            </a>
+            <a href="{{ url_for('admin.system_logs') }}" class="submenu-item">
+                <i class="fas fa-clipboard-list"></i> 系统日志
+            </a>
+            <a href="{{ url_for('admin.backup') }}" class="submenu-item">
+                <i class="fas fa-save"></i> 数据备份
+            </a>
+            <a href="{{ url_for('admin.cache_clear') }}" class="submenu-item">
+                <i class="fas fa-broom"></i> 清除缓存
+            </a>
+        </div>
+    </div>
+
+    <!-- 动态功能管理 -->
+    <div class="nav-item has-submenu">
+        <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-puzzle-piece"></i>
+            <span class="nav-text">功能管理</span>
+            <i class="nav-arrow fas fa-angle-down"></i>
+        </a>
+        <div class="submenu">
+            <a href="{{ url_for('admin_dynamic.function_list') }}" class="submenu-item">
+                <i class="fas fa-list"></i> 功能列表
+            </a>
+            <a href="{{ url_for('admin_dynamic.add_function') }}" class="submenu-item">
+                <i class="fas fa-plus"></i> 添加功能
+            </a>
+            <a href="{{ url_for('admin_dynamic.category_list') }}" class="submenu-item">
+                <i class="fas fa-folder"></i> 分类管理
+            </a>
+        </div>
+    </div>
+
+    <!-- 返回用户视图 -->
+    <div class="nav-item">
+        <a href="{{ url_for('dashboard.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-arrow-left"></i>
+            <span class="nav-text">返回用户视图</span>
+        </a>
+    </div>
+</div>

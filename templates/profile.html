@@ -1,103 +1,91 @@
-<!-- templates/profile.html -->
 {% extends "base.html" %}
 
 {% block title %}个人中心 - MyWeb{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-4">
-            <!-- 左侧导航 -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>个人中心</h5>
+{% block user_content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- 用户信息卡片 -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <div class="avatar mb-3">
+                    {% if current_user.avatar %}
+                    <img src="{{ url_for('static', filename=current_user.avatar) }}"
+                         class="rounded-circle" width="120" height="120" alt="头像">
+                    {% else %}
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center"
+                         style="width: 120px; height: 120px;">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="list-group list-group-flush">
-                    <a href="#profile-info" class="list-group-item list-group-item-action active">
-                        <i class="fas fa-info-circle me-2"></i>基本信息
-                    </a>
-                    <a href="#change-password" class="list-group-item list-group-item-action">
-                        <i class="fas fa-key me-2"></i>修改密码
-                    </a>
-                    <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action text-danger">
-                        <i class="fas fa-sign-out-alt me-2"></i>退出登录
-                    </a>
-                </div>
-            </div>
+                <h4 class="card-title">{{ current_user.username }}</h4>
+                <p class="text-muted">{{ current_user.email }}</p>
 
-            <!-- 如果是管理员，显示管理入口 -->
-            {% if current_user.is_admin %}
-            <div class="card mt-3 border-warning">
-                <div class="card-header bg-warning">
-                    <h6 class="mb-0"><i class="fas fa-crown me-2"></i>管理员</h6>
-                </div>
-                <div class="card-body text-center">
-                    <p>您是系统管理员</p>
-                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-warning btn-sm">
-                        <i class="fas fa-cogs me-1"></i>进入管理后台
-                    </a>
-                </div>
+                {% if current_user.is_admin %}
+                <span class="badge bg-warning mb-3">
+                    <i class="fas fa-crown me-1"></i>管理员
+                </span>
+                {% endif %}
             </div>
-            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <!-- 账户信息 -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>账户信息</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('user.update_profile') }}">
+                    <div class="mb-3">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-control" name="username" value="{{ current_user.username }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">邮箱</label>
+                        <input type="email" class="form-control" value="{{ current_user.email }}" disabled readonly>
+                        <small class="text-muted">邮箱不可修改</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">个人简介</label>
+                        <textarea class="form-control" name="bio" rows="3">{{ current_user.bio or '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">头像URL</label>
+                        <input type="text" class="form-control" name="avatar" value="{{ current_user.avatar or '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>保存修改
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div class="col-md-8">
-            <!-- 基本信息 -->
-            <div class="card mb-4" id="profile-info">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>基本信息</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>用户名:</strong> {{ current_user.username }}</p>
-                            <p><strong>邮箱:</strong> {{ current_user.email }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>账户状态:</strong>
-                                {% if current_user.email_verified %}
-                                <span class="badge bg-success">已验证</span>
-                                {% else %}
-                                <span class="badge bg-warning">未验证</span>
-                                {% endif %}
-                            </p>
-                            <p><strong>注册时间:</strong> {{ current_user.created_at.strftime('%Y-%m-%d %H:%M') if current_user.created_at else '未知' }}</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- 修改密码 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-key me-2"></i>修改密码</h5>
             </div>
-
-            <!-- 修改密码 -->
-            <div class="card" id="change-password">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-key me-2"></i>修改密码</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('user.change_password') }}">
-                        <div class="mb-3">
-                            <label for="current_password" class="form-label">当前密码</label>
-                            <input type="password" class="form-control" id="current_password"
-                                   name="current_password" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">新密码</label>
-                            <input type="password" class="form-control" id="new_password"
-                                   name="new_password" required minlength="6">
-                            <small class="text-muted">密码至少6位</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">确认新密码</label>
-                            <input type="password" class="form-control" id="confirm_password"
-                                   name="confirm_password" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>修改密码
-                        </button>
-                    </form>
-                </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('user.change_password') }}">
+                    <div class="mb-3">
+                        <label class="form-label">当前密码</label>
+                        <input type="password" class="form-control" name="current_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">新密码</label>
+                        <input type="password" class="form-control" name="new_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">确认新密码</label>
+                        <input type="password" class="form-control" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-sync-alt me-1"></i>修改密码
+                    </button>
+                </form>
             </div>
         </div>
     </div>

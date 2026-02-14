@@ -1,10 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- 普通用户侧边栏组件 -->
+<div class="nav-items">
+    <!-- 首页 -->
+    <div class="nav-item">
+        <a href="{{ url_for('dashboard.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <span class="nav-text">首页</span>
+        </a>
+    </div>
+
+    <!-- 控制台/仪表盘 -->
+    <div class="nav-item">
+        <a href="{{ url_for('dashboard.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <span class="nav-text">控制台</span>
+        </a>
+    </div>
+
+    <!-- 个人中心 -->
+    <div class="nav-item">
+        <a href="{{ url_for('profile.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-user"></i>
+            <span class="nav-text">个人中心</span>
+        </a>
+    </div>
+
+    <!-- 公告中心 -->
+    <div class="nav-item">
+        <a href="{{ url_for('announcements.announcement_list') }}" class="nav-link">
+            <i class="nav-icon fas fa-bullhorn"></i>
+            <span class="nav-text">公告中心</span>
+        </a>
+    </div>
+
+    <!-- 动态功能（一级菜单） -->
+    {% if dynamic_functions %}
+        {% for function in dynamic_functions %}
+            {% if function.menu_level == 1 and function.show_in_menu and function.is_active %}
+                {% if function.access_level in ['all', 'public', 'verified'] %}
+                <div class="nav-item {% if function.children %}has-submenu{% endif %}">
+                    <a href="{% if function.is_external %}{{ function.url_path }}{% else %}{{ url_for('dynamic.dynamic_function', function_path=function.name) }}{% endif %}"
+                       class="nav-link {% if function.is_external %}external-link{% endif %}">
+                        {% if function.icon %}<i class="nav-icon {{ function.icon }}"></i>{% else %}<i class="nav-icon fas fa-cube"></i>{% endif %}
+                        <span class="nav-text">{{ function.title }}</span>
+                        {% if function.children %}<i class="nav-arrow fas fa-angle-down"></i>{% endif %}
+                    </a>
+
+                    {% if function.children %}
+                    <div class="submenu">
+                        {% for child in function.children %}
+                            {% if child.show_in_menu and child.is_active %}
+                            <a href="{% if child.is_external %}{{ child.url_path }}{% else %}{{ url_for('dynamic.dynamic_function', function_path=child.name) }}{% endif %}"
+                               class="submenu-item {% if child.is_external %}external-link{% endif %}">
+                                {% if child.icon %}<i class="{{ child.icon }}"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                {{ child.title }}
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- 设置 -->
+    <div class="nav-item">
+        <a href="{{ url_for('settings.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-cog"></i>
+            <span class="nav-text">设置</span>
+        </a>
+    </div>
+
+    <!-- 帮助 -->
+    <div class="nav-item">
+        <a href="{{ url_for('help.index') }}" class="nav-link">
+            <i class="nav-icon fas fa-question-circle"></i>
+            <span class="nav-text">帮助</span>
+        </a>
+    </div>
+</div>

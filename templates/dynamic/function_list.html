@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}动态功能管理 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-sliders-h me-2"></i>动态功能管理</h2>
+            <p class="text-muted">管理系统菜单和功能配置</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('dynamic.add_function') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>添加新功能
+            </a>
+        </div>
+    </div>
+
+    <!-- 功能列表 -->
+    <div class="card">
+        <div class="card-body">
+            {% if functions %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>标题</th>
+                            <th>URL路径</th>
+                            <th>菜单层级</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for func in functions %}
+                        <tr>
+                            <td>{{ func.name }}</td>
+                            <td>
+                                {% if func.icon %}
+                                <i class="{{ func.icon }} me-2"></i>
+                                {% endif %}
+                                {{ func.title }}
+                            </td>
+                            <td>{{ func.url_path }}</td>
+                            <td>
+                                {% if func.menu_level == 1 %}
+                                <span class="badge bg-primary">一级菜单</span>
+                                {% else %}
+                                <span class="badge bg-secondary">二级菜单</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if func.is_active %}
+                                <span class="badge bg-success">激活</span>
+                                {% else %}
+                                <span class="badge bg-danger">禁用</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('dynamic.edit_function', function_id=func._id) }}"
+                                       class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger delete-function"
+                                            data-id="{{ func._id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-cubes fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">暂无功能配置</h5>
+                <p class="text-muted">点击"添加新功能"开始配置</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 删除功能确认
+    const deleteButtons = document.querySelectorAll('.delete-function');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const functionId = this.dataset.id;
+
+            if (confirm('确定要删除此功能吗？此操作无法撤销。')) {
+                fetch(`/admin/dynamic/function/${functionId}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('功能删除成功');
+                        location.reload();
+                    } else {
+                        alert('删除失败: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('删除失败');
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

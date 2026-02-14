@@ -1,10 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}公告管理 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="fas fa-bullhorn me-2"></i>公告管理</h2>
+            <p class="text-muted">管理系统公告和通知</p>
+        </div>
+    </div>
+
+    <!-- 快速操作卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-4">{{ stats.total }}</h1>
+                    <p class="card-text">总公告数</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-4">{{ stats.published }}</h1>
+                    <p class="card-text">已发布</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h1 class="display-4">{{ stats.draft }}</h1>
+                    <p class="card-text">草稿</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">快速操作</h5>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-plus me-2"></i>发布新公告
+                        </a>
+                        <a href="{{ url_for('announcements.admin_announcement_list') }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-list me-2"></i>所有公告
+                        </a>
+                        <a href="{{ url_for('announcements.announcement_list') }}" class="btn btn-info">
+                            <i class="fas fa-eye me-2"></i>用户视图
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最近公告 -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">最近公告</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_announcements %}
+                    <div class="list-group">
+                        {% for ann in recent_announcements %}
+                        <a href="{{ url_for('announcements.edit_announcement', announcement_id=ann._id) }}"
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ ann.title }}</h6>
+                                <small>{{ ann.publish_time_str }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">{{ ann.content[:100] }}...</p>
+                            <small>
+                                <span class="badge bg-{{ 'success' if ann.status == 'published' else 'warning' }}">
+                                    {{ '已发布' if ann.status == 'published' else '草稿' }}
+                                </span>
+                                <span class="badge bg-info ms-2">{{ ann.category }}</span>
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">暂无公告</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

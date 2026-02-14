@@ -1,10 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}清理未验证用户 - MyWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-broom me-2"></i>清理未验证用户
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if count == 0 %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        没有需要清理的未验证用户！
+                    </div>
+                    <div class="text-center">
+                        <a href="{{ url_for('admin.user_management') }}" class="btn btn-primary">
+                            返回用户管理
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>警告：此操作不可撤销！</strong>
+                        <p class="mb-0 mt-2">以下 {{ count }} 个用户将被删除：</p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>注册时间</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.created_at_str }}</td>
+                                    <td>
+                                        <span class="badge bg-warning">未验证</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4">
+                        <p>清理条件：</p>
+                        <ul>
+                            <li>注册时间超过7天</li>
+                            <li>邮箱未验证</li>
+                            <li>非管理员账户</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin.user_management') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>取消
+                        </a>
+                        <button type="button" class="btn btn-warning" onclick="executeCleanup()">
+                            <i class="fas fa-broom me-1"></i>确认清理 ({{ count }} 个用户)
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function executeCleanup() {
+    if (!confirm('确定要删除这 {{ count }} 个未验证用户吗？此操作不可撤销！')) {
+        return;
+    }
+
+    fetch('/admin/api/cleanup-unverified', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`清理完成！删除了 ${data.deleted_count} 个用户`);
+            window.location.href = "{{ url_for('admin.user_management') }}";
+        } else {
+            alert('清理失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('请求失败: ' + error);
+    });
+}
+</script>
+{% endblock %}

@@ -1,10 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<!-- templates/announcements/list.html -->
+{% extends "base_sidebar.html" %}
+
+{% block title %}公告列表 - MyWeb{% endblock %}
+
+{% block page_title %}公告列表{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">最新公告</h5>
+                {% if current_user.is_admin %}
+                <div class="card-header-actions">
+                    <a href="{{ url_for('announcements.create_announcement') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> 发布公告
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                <!-- 公告列表内容 -->
+                {% for announcement in announcements %}
+                <div class="announcement-item mb-3 p-3 border rounded">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">
+                                {% if announcement.is_pinned %}
+                                <span class="badge bg-danger me-2">置顶</span>
+                                {% endif %}
+                                <a href="{{ url_for('announcements.announcement_detail', announcement_id=announcement._id) }}"
+                                   class="text-decoration-none">
+                                    {{ announcement.title }}
+                                </a>
+                            </h5>
+                            <p class="text-muted mb-2">
+                                <small>
+                                    <i class="fas fa-user"></i> {{ announcement.author_name }}
+                                    <i class="fas fa-clock ms-2"></i> {{ announcement.publish_time_str }}
+                                    <i class="fas fa-eye ms-2"></i> {{ announcement.view_count }} 次查看
+                                </small>
+                            </p>
+                        </div>
+                        <span class="badge bg-secondary">{{ announcement.category }}</span>
+                    </div>
+                    <p class="mb-0">{{ announcement.summary }}</p>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">暂无公告</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if total_pages > 1 %}
+            <div class="card-footer">
+                <nav aria-label="公告分页">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page-1 }}">上一页</a>
+                        </li>
+                        {% endif %}
+
+                        {% for p in range(1, total_pages+1) %}
+                            {% if p >= page-2 and p <= page+2 %}
+                            <li class="page-item {% if p == page %}active{% endif %}">
+                                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page+1 }}">下一页</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

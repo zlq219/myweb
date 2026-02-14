@@ -1,0 +1,87 @@
+/* 紧急修复样式 */
+.header-actions .btn {
+    background-color: rgba(52, 152, 219, 0.15) !important;
+    border-color: rgba(52, 152, 219, 0.5) !important;
+    color: #3498db !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}
+
+.header-actions .btn:hover {
+    background-color: #3498db !important;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+.header-actions .btn-outline-primary {
+    background-color: rgba(52, 152, 219, 0.1) !important;
+    border-color: #3498db !important;
+    color: #3498db !important;
+}
+
+.header-actions .btn-outline-primary:hover {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+.header-actions .btn-outline-secondary {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.header-actions .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+}
+
+.header-actions .btn-outline-danger {
+    background-color: rgba(231, 76, 60, 0.1) !important;
+    border-color: #e74c3c !important;
+    color: #e74c3c !important;
+}
+
+.header-actions .btn-outline-danger:hover {
+    background-color: #e74c3c !important;
+    color: white !important;
+}
+
+/* 左侧导航修复 */
+.sidebar-nav .nav-link {
+    background-color: transparent !important;
+    color: #b8b8b8 !important;
+    opacity: 1 !important;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(52, 152, 219, 0.25) !important;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+.sidebar-nav .nav-link.active {
+    background-color: rgba(52, 152, 219, 0.35) !important;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* 用户信息修复 */
+.sidebar-footer .user-info {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    opacity: 1 !important;
+}
+
+.sidebar-footer .user-name {
+    color: white !important;
+    opacity: 1 !important;
+    font-weight: bold !important;
+}
+
+/* 移除所有模糊效果 */
+* {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}

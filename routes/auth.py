@@ -3,6 +3,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from utils.mailer import send_verification_email
 from datetime import datetime
+from werkzeug.security import generate_password_hash
+#from werkzeug.security import check_password_hash
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -50,7 +52,7 @@ def register():
         user_data = {
             'username': username,
             'email': email,
-            'password': password,
+            'password_hash': generate_password_hash(password),  # 这里改为 password_hash
             'is_active': False,
             'is_admin': False,
             'email_verified': False,
@@ -134,46 +136,52 @@ def resend_verification():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """普通登录页面 - 所有用户（包括管理员）都能用"""
     if current_user.is_authenticated:
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('main.home'))
 
     if request.method == 'POST':
-        email = request.form.get('email', '').strip().lower()
+        identifier = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 
-        if not email or not password:
-            flash('请输入邮箱和密码', 'danger')
-            return render_template('login.html')
-
         User = get_user_model()
-        user = User.get_by_email(get_mongo(), email)
+
+        # 先尝试按用户名查找
+        user = User.get_by_username(get_mongo(), identifier)
+
+        # 如果按用户名没找到，再尝试按邮箱查找
+        if not user:
+            user = User.get_by_email(get_mongo(), identifier.lower())
 
         if user and user.check_password(password):
-            # 检查邮箱是否已验证
-            if not user.email_verified:
-                flash('请先验证您的邮箱。', 'warning')
-                return render_template('verify_prompt.html', email=email)
+            # 检查邮箱验证
+            if hasattr(user, 'email_verified') and not user.email_verified:
+                flash('请先验证您的邮箱才能登录', 'warning')
+                return render_template('auth/login.html')
 
-            if not user.is_active:
-                flash('账户已被禁用，请联系管理员', 'danger')
-                return render_template('login.html')
+            # 检查用户状态
+            if hasattr(user, 'is_active') and not user.is_active:
+                flash('账户已被禁用', 'error')
+                return render_template('auth/login.html')
 
-            login_user(user, remember=False)
+            login_user(user, remember=request.form.get('remember_me') == 'on')
+
+            # 移除 update_last_login 调用，因为User类中没有这个方法
+
+            next_page = request.args.get('next')
+            if not next_page or not next_page.startswith('/'):
+                next_page = url_for('main.home')
+
             flash('登录成功！', 'success')
-
-            # 🔥 所有用户都去普通用户页面
-            # 即使是管理员，从这里登录也只是普通用户
-            return redirect(url_for('main.dashboard'))
+            return redirect(next_page)
         else:
-            flash('邮箱或密码错误', 'danger')
+            flash('用户名/邮箱或密码错误', 'error')
 
-    return render_template('login.html')
+    return render_template('auth/login.html')
 
 
 @auth_bp.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    """管理员专属登录 - 只做用户管理"""
+    """管理员专属登录 - 普通用户无法登录"""
     if current_user.is_authenticated:
         if current_user.is_admin:
             return redirect(url_for('admin.dashboard'))
@@ -183,31 +191,22 @@ def admin_login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
 
-        if not email or not password:
-            flash('请输入邮箱和密码', 'danger')
-            return render_template('auth/admin_login.html')
-
         User = get_user_model()
         user = User.get_by_email(get_mongo(), email)
 
         if user and user.check_password(password):
-            if not user.email_verified:
-                flash('请先验证您的邮箱。', 'warning')
-                return render_template('verify_prompt.html', email=email)
-
-            # 🔥 必须是管理员才能登录
+            # 🔥 关键修改：必须是管理员才能登录
             if not user.is_admin:
                 flash('此页面仅限管理员访问', 'danger')
                 return render_template('auth/admin_login.html')
 
-            if not user.is_active:
-                flash('账户已被禁用', 'danger')
-                return render_template('auth/admin_login.html')
+            # 检查邮箱验证
+            if not user.email_verified:
+                flash('管理员账户也必须验证邮箱', 'warning')
+                return render_template('verify_prompt.html', email=email)
 
             login_user(user, remember=True)
             flash('管理员登录成功！', 'success')
-
-            # 直接进入管理后台，只做用户管理
             return redirect(url_for('admin.dashboard'))
         else:
             flash('邮箱或密码错误', 'danger')
@@ -218,6 +217,7 @@ def admin_login():
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    """退出登录"""
     from flask import Response
 
     logout_user()
@@ -230,7 +230,3 @@ def logout():
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
 
     return response
-
-
-
-

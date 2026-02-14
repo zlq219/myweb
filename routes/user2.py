@@ -1,11 +1,15 @@
 # routes/user.py
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
-from extensions import mongo
 from models.user import User
 import hashlib
 
 user_bp = Blueprint('user', __name__)
+
+
+def get_mongo():
+    """安全地获取mongo实例"""
+    return current_app.mongo
 
 
 @user_bp.route('/profile')
@@ -41,27 +45,18 @@ def change_password():
         flash('当前密码错误', 'danger')
         return redirect(url_for('user.profile'))
 
-    # 更新密码
-    hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
-    mongo.db.users.update_one(
-        {'_id': current_user.id},
-        {'$set': {'password': hashed_password}}
-    )
+    # 使用User模型的update方法更新密码
+    mongo = get_mongo()
+
+    # 生成新的密码哈希
+    from werkzeug.security import generate_password_hash
+    new_password_hash = generate_password_hash(new_password)
+
+    # 更新数据库
+    User.update(mongo, current_user.id, {'password_hash': new_password_hash})
+
+    # 更新当前用户的password_hash（为了当前会话）
+    current_user.password_hash = new_password_hash
 
     flash('密码修改成功！', 'success')
-    return redirect(url_for('user.profile'))
-
-
-# 在 routes/user.py 中添加
-@user_bp.route('/users')
-@login_required
-def user_list():
-    """普通用户的用户列表（如果有需要的话）"""
-    # 这里可以显示一些公开的用户信息
-    # 或者只显示朋友列表等
-
-    # 如果是普通用户，可能不需要这个功能
-    # 用户管理应该是管理员的功能
-
-    # 临时实现：重定向到个人中心
     return redirect(url_for('user.profile'))
