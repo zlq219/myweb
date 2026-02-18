@@ -1,33 +1,36 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MyWeb - 基于Flask的Web应用{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 页面内容 -->
+    {% if request.endpoint and 'admin' in request.endpoint %}
+        <!-- 管理员后台布局 -->
+        {% include 'layouts/admin_layout.html' %}
+    {% elif current_user.is_authenticated %}
+        <!-- 所有登录用户都使用用户中心布局 -->
+        {% include 'layouts/user_layout.html' %}
+    {% else %}
+        <!-- 默认布局（未登录用户） -->
+        {% include 'partials/header.html' %}
 
-{% block title %}首页 - MyWeb{% endblock %}
+        <main class="container mt-4">
+            {% include 'partials/messages.html' %}
+            {% block content %}{% endblock %}
+        </main>
 
-{% block user_content %}  <!-- 改为 user_content -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>欢迎, {{ current_user.username }}!</h1>
-            <p>这是你的个人主页。</p>
+        {% include 'partials/footer.html' %}
+    {% endif %}
 
-            {% if recent_announcements %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5>最近公告</h5>
-                </div>
-                <div class="card-body">
-                    {% for announcement in recent_announcements %}
-                    <div class="mb-3">
-                        <h6>{{ announcement.title }}</h6>
-                        <p class="text-muted small">{{ announcement.publish_time_str }}</p>
-                        <p>{{ announcement.summary }}</p>
-                        <a href="#" class="btn btn-sm btn-primary">查看详情</a>  <!-- 先用# -->
-                    </div>
-                    {% if not loop.last %}<hr>{% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -31,7 +31,7 @@
                                 </div>
                                 <!-- 子菜单 -->
                                 {% for child in menu_item.children %}
-                                <a href="{% if child.endpoint != '#' %}{{ url_for(child.endpoint) }}{% else %}#{% endif %}"
+                                <a href="{{ url_for(child.endpoint) if child.endpoint != '#' else '#' }}"
                                    class="list-group-item list-group-item-action ps-4"
                                    style="background-color: #2c3e50; color: #bdc3c7; border: none; border-bottom: 1px solid #34495e; {% if request.endpoint and child.endpoint in request.endpoint %}background-color: #3498db; color: white;{% endif %}"
                                    onmouseover="this.style.backgroundColor='#34495e'; this.style.color='white';"
@@ -41,7 +41,7 @@
                                 {% endfor %}
                             {% else %}
                                 <!-- 普通菜单项 -->
-                                <a href="{% if menu_item.endpoint != '#' %}{{ url_for(menu_item.endpoint) }}{% else %}#{% endif %}"
+                                <a href="{{ url_for(menu_item.endpoint) if menu_item.endpoint != '#' else '#' }}"
                                    class="list-group-item list-group-item-action"
                                    style="background-color: #2c3e50; color: #ecf0f1; border: none; border-bottom: 1px solid #34495e; {% if request.endpoint and menu_item.endpoint in request.endpoint %}background-color: #3498db; color: white;{% endif %}"
                                    onmouseover="this.style.backgroundColor='#34495e';"
@@ -81,78 +81,22 @@
             </div>
 
             <!-- 右侧内容区域 - 浅色背景 -->
-            <div class="col-10" style="min-height: 600px; background-color: #f8f9fa; padding: 25px; border-left: 1px solid #dee2e6;">
+            <div class="col-10">
                 <!-- 消息提示 -->
                 {% include 'partials/messages.html' %}
 
                 <!-- 面包屑导航 -->
-                <nav aria-label="breadcrumb" class="mt-2 mb-4">
+                <nav aria-label="breadcrumb" class="mt-2">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}" style="color: #3498db;">首页</a></li>
                         {% block breadcrumb %}{% endblock %}
                     </ol>
                 </nav>
 
-                <!-- 测试区域 - 用于验证右侧显示 -->
-                <div style="background-color: #fff3cd; border: 3px solid #ffc107; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-                    <h3 style="color: #856404; margin-top: 0;">✅ 右侧区域测试</h3>
-                    <p style="color: #856404; font-size: 16px; margin-bottom: 5px;">如果您能看到这个黄色区块，说明右侧内容区域正常工作！</p>
-                    <p style="color: #856404; font-size: 14px;">当前时间: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '测试时间' }}</p>
-                </div>
-
-                <!-- 主要内容卡片（浅色） - 根据URL显示不同内容 -->
-                <div class="card shadow-sm" style="background-color: #ffffff; border: 2px solid #28a745; border-radius: 10px;">
-                    <div class="card-body" style="padding: 25px;">
-                        {% if request.endpoint == 'main.home' %}
-                            <!-- 主页内容 -->
-                            <h2 style="color: #28a745; border-bottom: 2px solid #28a745; padding-bottom: 10px;">个人主页</h2>
-                            <p style="font-size: 16px; margin-top: 15px;">欢迎来到您的个人主页</p>
-                            {% block home_content %}
-                            <!-- 默认主页内容 -->
-                            <div class="mt-3">
-                                <h3>欢迎, {{ current_user.username }}!</h3>
-                                <p>这是您的个人主页</p>
-                                <hr>
-                                <p>当前时间: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '获取时间失败' }}</p>
-                            </div>
-                            {% endblock %}
-                        {% elif request.endpoint == 'main.static_test' %}
-                            <!-- 测试页面内容 -->
-                            <h2 style="color: #28a745; border-bottom: 2px solid #28a745; padding-bottom: 10px;">静态测试</h2>
-                            <p style="font-size: 16px; margin-top: 15px;">这是一个静态测试页面</p>
-                            {% block test_content %}
-                            <!-- 默认测试内容 -->
-                            <div class="mt-3">
-                                <h1>Hello, World!</h1>
-                                <p class="lead">这是一个融入架构的静态测试页面</p>
-                                <hr>
-                                <p>当前时间: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '获取时间失败' }}</p>
-                                <p>当前用户: {{ current_user.username if current_user.is_authenticated else '未登录' }}</p>
-                            </div>
-                            {% endblock %}
-                        {% elif request.endpoint == 'user.profile' %}
-                            <!-- 个人资料内容 -->
-                            <h2 style="color: #28a745; border-bottom: 2px solid #28a745; padding-bottom: 10px;">个人资料</h2>
-                            <p style="font-size: 16px; margin-top: 15px;">您的个人资料</p>
-                            {% block profile_content %}
-                            <!-- 默认个人资料内容 -->
-                            <div class="mt-3">
-                                <p><strong>用户名:</strong> {{ current_user.username }}</p>
-                                <p><strong>邮箱:</strong> {{ current_user.email }}</p>
-                            </div>
-                            {% endblock %}
-                        {% else %}
-                            <!-- 默认内容 -->
-                            <h2 style="color: #28a745; border-bottom: 2px solid #28a745; padding-bottom: 10px;">内容区域</h2>
-                            <p style="font-size: 16px; margin-top: 15px;">这里是动态内容区域，将显示不同页面的具体内容。</p>
-                            {% block user_content %}
-                            <!-- 默认内容，如果没有定义user_content则显示 -->
-                            <div style="background-color: #e9ecef; padding: 20px; border-radius: 5px; margin-top: 15px;">
-                                <h4>默认内容</h4>
-                                <p>这是 user_content 块的默认内容。如果看到这个，说明 user_content 块没有被正确填充。</p>
-                            </div>
-                            {% endblock %}
-                        {% endif %}
+                <!-- 主要内容卡片（浅色） -->
+                <div class="card shadow-sm" style="background-color: #ffffff; border: none;">
+                    <div class="card-body">
+                        {% block user_content %}{% endblock %}
                     </div>
                 </div>
             </div>

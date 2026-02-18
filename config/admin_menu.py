@@ -148,6 +148,14 @@ USER_MENU = [
             }
         ]
     },
+    {
+        'title': '静态测试',
+        'endpoint': 'main.static_test',
+        'icon': 'fas fa-flask',
+        'type': 'single',
+        'permission': 'user',
+        'order': 99  # 放在最后
+    },
 ]
 
 # ==================== 公共菜单配置 ====================

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}静态测试 - MyWeb{% endblock %}
+
+{% block user_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-flask me-2"></i>静态测试页面</h3>
+                </div>
+                <div class="card-body">
+                    <h1>Hello, World!</h1>
+                    <p class="lead">这是一个融入架构的静态测试页面</p>
+                    <hr>
+                    <p>✅ 左侧菜单正常显示</p>
+                    <p>✅ 右侧内容正常显示</p>
+                    <p>✅ 当前时间：{{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '获取时间失败' }}</p>
+                    <p>✅ 当前用户：{{ current_user.username if current_user.is_authenticated else '未登录' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

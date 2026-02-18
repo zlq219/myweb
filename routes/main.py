@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from config.admin_menu import get_public_menu, get_user_menu, get_admin_menu  # 导入所有菜单函数
+from config.admin_menu import get_public_menu, get_user_menu, get_admin_menu
+from datetime import datetime
 
 main_bp = Blueprint('main', __name__)
 
@@ -20,7 +21,7 @@ def index():
 @main_bp.route('/home')
 @login_required
 def home():
-    """用户主页 - 登录后显示"""
+    """用户主页"""
     from flask import current_app
     mongo = current_app.mongo
 
@@ -38,19 +39,18 @@ def home():
         else:
             ann['summary'] = ann.get('content', '')
 
-    # 根据用户类型获取菜单
+    # 获取菜单
     if hasattr(current_user, 'is_admin') and current_user.is_admin:
-        # 管理员看到的是管理员菜单
         menu = get_admin_menu(current_user)
-        template = 'admin/dashboard.html'  # 管理员看到的是后台
     else:
-        # 普通用户看到的是用户菜单
         menu = get_user_menu(current_user)
-        template = 'home.html'
 
-    return render_template(template,
-                           recent_announcements=recent_announcements,
-                           user_menu=menu)  # 传递菜单数据
+    now = datetime.now()
+
+    return render_template('home.html',
+                           user_menu=menu,
+                           now=now,
+                           recent_announcements=recent_announcements)
 
 
 @main_bp.route('/dashboard')
@@ -63,7 +63,6 @@ def dashboard():
 @main_bp.route('/about')
 def about():
     """关于页面"""
-    # 获取公共菜单
     public_menu = get_public_menu()
     return render_template('about.html', public_menu=public_menu)
 
@@ -73,6 +72,21 @@ def admin_entry():
     """管理员专用入口页面"""
     public_menu = get_public_menu()
     return render_template('admin_entry.html', public_menu=public_menu)
+
+
+@main_bp.route('/test-menu')
+def test_menu():
+    """菜单测试页面 - 不依赖任何复杂功能"""
+    menu = get_user_menu(current_user) if current_user.is_authenticated else get_public_menu()
+    return render_template('test_menu.html', user_menu=menu)
+
+
+@main_bp.route('/static-test')
+def static_test():
+    """静态测试页面"""
+    menu = get_user_menu(current_user) if current_user.is_authenticated else get_public_menu()
+    now = datetime.now()
+    return render_template('static_test.html', user_menu=menu, now=now)
 
 
 # 错误处理函数
